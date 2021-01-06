@@ -1,15 +1,4 @@
-import {
-  cloudImg,
-  cloudTransparentImg,
-  desertBackgroundImg,
-  enemyBigImg,
-  enemyMediumImg,
-  enemySmallImg,
-  explosionImg,
-  laserBoltsImg,
-  powerUpImg,
-  shipImg,
-} from "~/assets";
+import { shipSprite, backgroundSprite, bulletSprite } from "~/assets";
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -32,37 +21,9 @@ export class BootScene extends Phaser.Scene {
       0xffffff
     );
 
-    this.load.image(cloudImg, cloudImg);
-    this.load.image(cloudTransparentImg, cloudTransparentImg);
-    this.load.image(desertBackgroundImg, desertBackgroundImg);
-    this.load.spritesheet(enemyBigImg, enemyBigImg, {
-      frameWidth: 16,
-      frameHeight: 24,
-    });
-    this.load.spritesheet(enemyMediumImg, enemyMediumImg, {
-      frameWidth: 16,
-      frameHeight: 24,
-    });
-    this.load.spritesheet(enemySmallImg, enemySmallImg, {
-      frameWidth: 16,
-      frameHeight: 24,
-    });
-    this.load.spritesheet(explosionImg, explosionImg, {
-      frameWidth: 16,
-      frameHeight: 24,
-    });
-    this.load.spritesheet(laserBoltsImg, laserBoltsImg, {
-      frameWidth: 16,
-      frameHeight: 24,
-    });
-    this.load.spritesheet(powerUpImg, powerUpImg, {
-      frameWidth: 16,
-      frameHeight: 24,
-    });
-    this.load.spritesheet(shipImg, shipImg, {
-      frameWidth: 16,
-      frameHeight: 24,
-    });
+    this.load.image(backgroundSprite, backgroundSprite);
+    this.load.image(shipSprite, shipSprite);
+    this.load.image(bulletSprite, bulletSprite);
 
     this.load.on("progress", (progress) => (bar.width = bg.width * progress));
   }

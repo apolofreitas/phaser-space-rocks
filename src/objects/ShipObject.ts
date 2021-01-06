@@ -1,66 +1,71 @@
-import { shipImg } from "~/assets";
+import { shipSprite } from "~/assets";
+
+enum Tilting {
+  "false",
+  "left",
+  "right",
+}
+enum Moving {
+  "false",
+  "forward",
+}
 
 export class ShipObject extends Phaser.Physics.Arcade.Sprite {
-  private animation: number = 0;
-  private animationTarget: number = 0;
-  constructor(scene: Phaser.Scene, x: number, y: number) {
-    super(scene, x, y, shipImg);
-    scene.physics.add.existing(this);
-    scene.add.existing(this);
+  public commands = {
+    moving: Moving.false,
+    tilting: Tilting.false,
+  };
+  constructor(public scene: Phaser.Scene, x?: number, y?: number) {
+    super(scene, x, y, shipSprite);
+    this.scene.physics.add.existing(this);
+    this.scene.add.existing(this);
+  }
 
-    this.anims.create({
-      key: "2",
-      frameRate: 10,
-      frames: this.anims.generateFrameNumbers(shipImg, { frames: [4, 9] }),
-      repeat: -1,
-    });
-    this.anims.create({
-      key: "1",
-      frameRate: 10,
-      frames: this.anims.generateFrameNumbers(shipImg, { frames: [3, 8] }),
-      repeat: -1,
-    });
-    this.anims.create({
-      key: "0",
-      frameRate: 10,
-      frames: this.anims.generateFrameNumbers(shipImg, { frames: [2, 7] }),
-      repeat: -1,
-    });
-    this.anims.create({
-      key: "-1",
-      frameRate: 10,
-      frames: this.anims.generateFrameNumbers(shipImg, { frames: [1, 6] }),
-      repeat: -1,
-    });
-    this.anims.create({
-      key: "-2",
-      frameRate: 10,
-      frames: this.anims.generateFrameNumbers(shipImg, { frames: [0, 5] }),
-      repeat: -1,
-    });
+  addedToScene() {
+    this.setAngle(-90);
+    this.setMaxVelocity(200);
+  }
 
-    this.anims.play("0");
+  preUpdate(time: number, delta: number) {
+    this.updateCommands();
 
-    scene.input.keyboard.on("keydown-W", (event) => {});
-    scene.input.keyboard.on("keydown-A", (event) => {
-      this.animationTarget = -2;
-      this.setAngularVelocity(-200);
-    });
-    scene.input.keyboard.on("keydown-D", (event) => {
-      this.animationTarget = 2;
-      this.setAngularVelocity(200);
-    });
-
-    scene.events.on("update", (_, dt: number) => {
+    if (this.commands.moving === Moving.forward) {
       const rotation =
-        this.rotation <= 0
-          ? -this.rotation
-          : -(this.rotation - Math.PI) + Math.PI;
+        this.rotation <= 0 ? -this.rotation : -this.rotation + 2 * Math.PI;
+      this.setAcceleration(Math.cos(rotation) * 100, -Math.sin(rotation) * 100);
+    }
+    if (this.commands.moving === Moving.false) {
+      this.setAcceleration(0, 0);
+    }
 
-      this.setVelocity(
-        Math.cos(rotation + Math.PI / 2) * 8 * dt,
-        -Math.sin(rotation + Math.PI / 2) * 8 * dt
-      );
-    });
+    if (this.commands.tilting === Tilting.left) {
+      this.setAngularVelocity(-200);
+    }
+    if (this.commands.tilting === Tilting.right) {
+      this.setAngularVelocity(200);
+    }
+    if (this.commands.tilting === Tilting.false) {
+      this.setAngularVelocity(0);
+    }
+
+    const { main: camera } = this.scene.cameras;
+
+    this.x = this.x < 0 - this.width / 2 ? camera.x + camera.width : this.x;
+    this.x = this.x > camera.x + camera.width + this.width / 2 ? 0 : this.x;
+    this.y = this.y < 0 - this.height / 2 ? camera.y + camera.height : this.y;
+    this.y = this.y > camera.y + camera.height + this.height / 2 ? 0 : this.y;
+  }
+
+  updateCommands() {
+    const { W, A, D } = this.scene.input.keyboard.addKeys("W,A,D") as {
+      [key: string]: Phaser.Input.Keyboard.Key;
+    };
+
+    if (A.isDown && !D.isDown) this.commands.tilting = Tilting.left;
+    if (!A.isDown && D.isDown) this.commands.tilting = Tilting.right;
+    if (!A.isDown && !D.isDown) this.commands.tilting = Tilting.false;
+
+    if (W.isDown) this.commands.moving = Moving.forward;
+    if (!W.isDown) this.commands.moving = Moving.false;
   }
 }

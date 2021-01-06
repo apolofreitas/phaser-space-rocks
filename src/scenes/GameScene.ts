@@ -1,15 +1,38 @@
+import { backgroundSprite } from "~/assets";
 import { ShipObject } from "~/objects/ShipObject";
 
 export class GameScene extends Phaser.Scene {
   constructor() {
-    super({ key: "GameScene" });
+    super({
+      key: "GameScene",
+      plugins: {
+        wrap: {
+          min: {
+            x: 0,
+            y: 0,
+          },
+          max: {
+            x: 500,
+            y: 500,
+          },
+        },
+      },
+    });
   }
 
   create() {
-    this.add.grid(100, 100, 128, 96, 32, 32, 0x057605);
-    const ship = new ShipObject(this, 0, 0);
-    this.cameras.main.startFollow(ship, false, 0.1, 0.1);
-    this.cameras.main.setZoom(3);
+    const bg = this.add.tileSprite(
+      this.cameras.main.width / 2,
+      this.cameras.main.height / 2,
+      this.cameras.main.width,
+      this.cameras.main.height,
+      backgroundSprite
+    );
+    const ship = new ShipObject(
+      this,
+      this.cameras.main.width / 2,
+      this.cameras.main.height / 2
+    );
   }
 
   update() {}
