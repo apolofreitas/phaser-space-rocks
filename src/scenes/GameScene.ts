@@ -1,9 +1,22 @@
-import { backgroundSprite } from "~/assets";
 import { ShipObject } from "~/objects/ShipObject";
+import { BackgroundObject } from "~/objects/BackgroundObject";
+import { SpriteWrapOnWorldBounds } from "~/plugins/SpriteWrapOnWorldBounds";
 
 export class GameScene extends Phaser.Scene {
+  ship: ShipObject;
+  bg: Phaser.GameObjects.TileSprite;
+  spriteWrapOnWorldBounds: SpriteWrapOnWorldBounds;
   constructor() {
     super({ key: "GameScene" });
+  }
+
+  preload() {
+    this.plugins.installScenePlugin(
+      "SpriteWrapOnWorldBounds",
+      SpriteWrapOnWorldBounds,
+      "spriteWrapOnWorldBounds",
+      this
+    );
   }
 
   create() {
@@ -13,19 +26,12 @@ export class GameScene extends Phaser.Scene {
       this.cameras.main.width,
       this.cameras.main.height
     );
-    const bg = this.add.tileSprite(
-      this.physics.world.bounds.width / 2,
-      this.physics.world.bounds.height / 2,
-      this.physics.world.bounds.width,
-      this.physics.world.bounds.height,
-      backgroundSprite
-    );
-    const ship = new ShipObject(
+    this.bg = new BackgroundObject(this);
+    this.ship = new ShipObject(
       this,
       this.physics.world.bounds.width / 2,
       this.physics.world.bounds.height / 2
     );
+    this.spriteWrapOnWorldBounds.add(this.ship);
   }
-
-  update() {}
 }

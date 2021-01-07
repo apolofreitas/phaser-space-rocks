@@ -12,7 +12,7 @@ enum Moving {
 enum Shooting {
   ready,
   shooting,
-  delay,
+  preparing,
 }
 
 export class ShipObject extends Phaser.Physics.Arcade.Sprite {
@@ -33,26 +33,8 @@ export class ShipObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   preUpdate(time: number, delta: number) {
-    this.wrapOnWorldBounds();
     this.updateCommands();
     this.updateObject();
-  }
-
-  wrapOnWorldBounds() {
-    const { bounds } = this.scene.physics.world;
-
-    if (this.x < bounds.x - this.width / 2) {
-      this.x = bounds.x + bounds.width + this.width / 2;
-    }
-    if (this.x > bounds.x + bounds.width + this.width / 2) {
-      this.x = bounds.x - this.width / 2;
-    }
-    if (this.y < bounds.y - this.height / 2) {
-      this.y = bounds.y + bounds.height + this.height / 2;
-    }
-    if (this.y > bounds.y + bounds.height + this.height / 2) {
-      this.y = bounds.y - this.height / 2;
-    }
   }
 
   updateCommands() {
@@ -92,7 +74,7 @@ export class ShipObject extends Phaser.Physics.Arcade.Sprite {
     }
     if (this.commands.shooting === Shooting.shooting) {
       console.log("shot");
-      this.commands.shooting = Shooting.delay;
+      this.commands.shooting = Shooting.preparing;
       setTimeout(() => (this.commands.shooting = Shooting.ready), 250);
     }
   }
