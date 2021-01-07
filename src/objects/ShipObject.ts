@@ -1,4 +1,6 @@
 import { shipSprite } from "~/assets";
+import { phaserRotationToMathNotation } from "~/utils/phaserRotationToMathNotation";
+import { BulletObject } from "./BulletObject";
 
 enum Tilting {
   false,
@@ -25,6 +27,7 @@ export class ShipObject extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, shipSprite);
     this.scene.physics.add.existing(this);
     this.scene.add.existing(this);
+    this.scene.events.on("update", this.update, this);
   }
 
   addedToScene() {
@@ -32,7 +35,7 @@ export class ShipObject extends Phaser.Physics.Arcade.Sprite {
     this.setMaxVelocity(200);
   }
 
-  preUpdate(time: number, delta: number) {
+  update(time: number, delta: number) {
     this.updateCommands();
     this.updateObject();
   }
@@ -57,7 +60,7 @@ export class ShipObject extends Phaser.Physics.Arcade.Sprite {
 
   updateObject() {
     if (this.commands.moving === Moving.forward) {
-      const rotation = -this.rotation + (this.rotation < 0 ? 2 * Math.PI : 0);
+      const rotation = phaserRotationToMathNotation(this.rotation);
       this.setAcceleration(Math.cos(rotation) * 100, -Math.sin(rotation) * 100);
     }
     if (this.commands.moving === Moving.false) {
@@ -73,9 +76,8 @@ export class ShipObject extends Phaser.Physics.Arcade.Sprite {
       this.setAngularVelocity(0);
     }
     if (this.commands.shooting === Shooting.shooting) {
-      console.log("shot");
       this.commands.shooting = Shooting.preparing;
-      setTimeout(() => (this.commands.shooting = Shooting.ready), 250);
+      setTimeout(() => (this.commands.shooting = Shooting.ready), 150);
     }
   }
 }
