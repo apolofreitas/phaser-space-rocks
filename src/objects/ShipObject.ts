@@ -76,6 +76,15 @@ export class ShipObject extends Phaser.Physics.Arcade.Sprite {
       this.setAngularVelocity(0);
     }
     if (this.commands.shooting === Shooting.shooting) {
+      const rotation = phaserRotationToMathNotation(this.rotation);
+
+      const bulletX = this.x + (Math.cos(rotation) * this.width) / 2;
+      const bulletY = this.y + (-Math.sin(rotation) * this.height) / 2;
+
+      const bullet = new BulletObject(this.scene, bulletX, bulletY);
+
+      bullet.shoot(this.rotation, 600);
+
       this.commands.shooting = Shooting.preparing;
       setTimeout(() => (this.commands.shooting = Shooting.ready), 150);
     }
