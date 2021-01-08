@@ -5,8 +5,8 @@ import { GameScene } from "~/scenes/GameScene";
 
 new Phaser.Game({
   type: Phaser.AUTO,
-  width: 500,
-  height: 500,
+  width: 600,
+  height: 600,
   // @ts-ignore
   pixelArt: true,
   scale: {

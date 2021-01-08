@@ -1,4 +1,4 @@
-import { shipSprite, backgroundSprite, bulletSprite } from "~/assets";
+import * as assets from "~/assets";
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -21,9 +21,7 @@ export class BootScene extends Phaser.Scene {
       0xffffff
     );
 
-    this.load.image(backgroundSprite, backgroundSprite);
-    this.load.image(shipSprite, shipSprite);
-    this.load.image(bulletSprite, bulletSprite);
+    Object.values(assets).forEach((asset) => this.load.image(asset, asset));
 
     this.load.on("progress", (progress) => (bar.width = bg.width * progress));
   }

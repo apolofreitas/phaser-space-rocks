@@ -1,19 +1,34 @@
+import { nanoid } from "nanoid";
+import { GameScene } from "~/scenes/GameScene";
 import { bulletSprite } from "~/assets";
-import { phaserRotationToMathNotation } from "~/utils/phaserRotationToMathNotation";
 
 export class BulletObject extends Phaser.Physics.Arcade.Sprite {
-  constructor(public scene: Phaser.Scene, x?: number, y?: number) {
-    super(scene, x, y, bulletSprite);
-    this.scene.physics.add.existing(this);
-    this.scene.add.existing(this);
-  }
+  constructor(
+    private game: GameScene,
+    x?: number,
+    y?: number,
+    rotation: number = 0,
+    velocity: number = 100
+  ) {
+    super(game, x, y, bulletSprite);
+    this.game.physics.add.existing(this);
+    this.game.add.existing(this);
 
-  shoot(phaserRotation: number, velocity: number) {
-    const rotation = phaserRotationToMathNotation(phaserRotation);
-    this.setAngle(phaserRotation * (180 / Math.PI));
+    this.setScale(1.25);
+    this.setName(nanoid());
+    this.setRotation(rotation);
     this.setVelocity(
       Math.cos(rotation) * velocity,
-      -Math.sin(rotation) * velocity
+      Math.sin(rotation) * velocity
     );
+  }
+
+  preUpdate() {
+    if (!this.game.physics.world.bounds.contains(this.x, this.y)) this.onHit();
+  }
+
+  onHit() {
+    this.game.bulletsGroup.remove(this);
+    this.destroy();
   }
 }
