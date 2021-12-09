@@ -1,7 +1,7 @@
-import "phaser";
+import 'phaser'
 
-import { BootScene } from "~/scenes/BootScene";
-import { GameScene } from "~/scenes/GameScene";
+import { BootScene } from '~/src/scenes/BootScene'
+import { GameScene } from '~/src/scenes/GameScene'
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -14,7 +14,7 @@ new Phaser.Game({
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
   physics: {
-    default: "arcade",
+    default: 'arcade',
   },
   scene: [BootScene, GameScene],
-});
+})
